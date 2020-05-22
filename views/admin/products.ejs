@@ -6,6 +6,12 @@
     <%- include('../includes/navi.ejs') %>
 
     <main>
+        <% if(message) { %>
+            <div class="user-message user-message--success">
+                <%= message %>
+            </div>
+        <% } %>
+
         <% if(prods.length > 0) { %>
             <div class="grid">
                 <% for(let product of prods) { %>
@@ -25,10 +31,11 @@
                         
                         <div class="card__actions">
                             <!-- Redirect to the specify id editing page -->
-                            <a href="/admin/edit-product/<%= product.id %>?edit=true" class="btn">Edit</a>
+                            <a href="/admin/edit-product/<%= product._id %>?edit=true" class="btn">Edit</a>
                             <form action="/admin/delete-product" method="POST">
-                                <input type="hidden" value="<%= product.id %>" name="productId">
-                                <button type="submit" class="btn">Delete</button>
+                                <input type="hidden" value="<%= product._id %>" name="productId">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <button type="submit" class="btn danger">Delete</button>
                             </form>
                         </div>
                     </article>

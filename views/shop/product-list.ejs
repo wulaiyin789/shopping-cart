@@ -30,10 +30,13 @@
                         </div>
 
                         <div class="card__actions">
-                            <a href="/products/<%= product.id %>" class="btn">
+                            <a href="/products/<%= product._id %>" class="btn">
                                 Details
                             </a>
-                            <%- include('../includes/add-to-cart.ejs', { product: product }) %>
+                            
+                            <% if(isAuth) { %>
+                                <%- include('../includes/add-to-cart.ejs', { product: product }) %>
+                            <% } %> 
                         </div>
                     </article>
                     <% } %>
