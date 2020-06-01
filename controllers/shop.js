@@ -1,13 +1,33 @@
 const Product = require('../models/product');
 const Order = require('../models/order');
 
+const ITEMS_PER_PAGE = 3;
+
 exports.getProducts = (req, res, next) => {
+    const page = +req.query.page || 1;
+
     Product.find()
+        .skip((page - 1) * ITEMS_PER_PAGE)
+        .limit(ITEMS_PER_PAGE)
         .then(products => {
-            res.render('shop/product-list', { 
-                prods: products, 
-                pageTitle: 'All Products', 
-                path: '/products'
+            Product.countDocuments()
+                .then(totalProds => {
+                    const pagesCount = Math.ceil(totalProds / ITEMS_PER_PAGE);
+
+                    return {
+                        totalPages: pagesCount,
+                        currPage: page,
+                        hasPrev: page > 1,
+                        hasNext: page < pagesCount
+                    };
+                })
+                .then(pagingData => {
+                    res.render('shop/index', { 
+                        prods: products, 
+                        pageTitle: 'All Products', 
+                        path: '/products',
+                        pagination: pagingData
+                    });
             });
         })
         .catch(err => {
@@ -41,12 +61,30 @@ exports.getProduct = (req, res, next) => {
 }
 
 exports.getIndex = (req, res, next) => {
+    const page = +req.query.page || 1;
+
     Product.find()
+        .skip((page - 1) * ITEMS_PER_PAGE)
+        .limit(ITEMS_PER_PAGE)
         .then(products => {
-            res.render('shop/index', { 
-                prods: products, 
-                pageTitle: 'Shop', 
-                path: '/'
+            Product.countDocuments()
+                .then(totalProds => {
+                    const pagesCount = Math.ceil(totalProds / ITEMS_PER_PAGE);
+
+                    return {
+                        totalPages: pagesCount,
+                        currPage: page,
+                        hasPrev: page > 1,
+                        hasNext: page < pagesCount
+                    };
+                })
+                .then(pagingData => {
+                    res.render('shop/index', { 
+                        prods: products, 
+                        pageTitle: 'Shop', 
+                        path: '/',
+                        pagination: pagingData
+                    });
             });
         })
         .catch(err => {
